@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TESODEV LİST PAGE</title>
+    <link rel="stylesheet" href="tesodev/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    />
+  </head>
+  <body>
+    <section>
+      <div class="container">
+        <div class="main">
+          <div class="list-logo">
+            <img
+              width="150"
+              height="65"
+              src="./tesodev/assets/tesodevLogo.jpg"
+              alt=""
+            />
+            <div class="list-actions">
+              <input type="text" id="search" />
+              <button type="button">Search</button>
+            </div>
+          </div>
+          <div class="order">
+            <span class="order-icon">
+              <i class="fas fa-sort-alt" class="order-icon"></i>
+              Order By
+            </span>
+            <div class="order-list">
+              <ul>
+                <li>Name ascending</li>
+                <li>Name descending</li>
+                <li>Year ascending</li>
+                <li>Year descending</li>
+              </ul>
+            </div>
+          </div>
+          <div class="list-results">
+            <div class="list-result-box">
+              <div class="list-result-item"></div>
+            </div>
+          </div>
+          <div id="pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      let input = document.getElementById("search"),
+        inputVal = document.getElementById("search").value,
+        button = document.querySelector("button"),
+        resultBox = document.querySelector(".list-result-box"),
+        result = document.querySelector(".list-result-item"),
+        orderList = document.querySelector(".order-list"),
+        orderIcon = document.querySelector(".order-icon");
+
+      fetch("data.json")
+        .then((res) => res.json())
+        .then((datas) => {
+          for (var i = 0; i < datas.data.length; i++) {
+            var el = datas.data[i];
+            var createEl = document.createElement("div");
+            createEl.classList.add("list-box");
+            var resultItem = `
+                <div class="test">
+                   <span><b>${el[4]} - ${el[5]}</b></span>
+                                            <span>${el[0]} - ${el[3]}</span>
+                                        </div>
+                                        <div class="test">
+                                            <b>Email : ${el[2]}</b>
+                                        </div>
+                                        `;
+            createEl.innerHTML = resultItem;
+            result.append(createEl);
+          }
+          let caseItem = $(".list-result-item > div.list-box").length;
+          //total show product
+          let caseCount = 9;
+          //page count
+          let pageCount = Math.ceil(caseItem / caseCount);
+
+          //apply pagination
+          $(
+            ".list-result-item div.list-box:gt(" + (pageCount - 3) + ")"
+          ).hide();
+
+          //link for pagination button
+          for (let i = 1; i <= pageCount; i++) {
+            $("#pagination").append(
+              '<a href="javascript:void(0)">' + i + "</a> "
+            );
+          }
+
+          //first page active
+          $("#pagination a:first").addClass("active");
+
+          //click pagination
+          $("#pagination a").click(function () {
+            var indis = $(this).index() + 1;
+            var gt = caseCount * indis;
+            $("#pagination a").removeClass("active");
+            $(this).addClass("active");
+            $(".list-result-item > div.list-box").hide();
+            for (k = gt - caseCount; k < gt; k++) {
+              $(".list-result-item div.list-box:eq(" +( k -1) + ")").show();
+            }
+          });
+        });
+    </script>
+  </body>
+</html>

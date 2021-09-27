@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESODEV SEARCH</title>
+    <link rel="stylesheet" href="tesodev/style.css">
+</head>
+<body>
+    
+    <section>
+        <div class="container">
+            <div class="main">
+                <div class="logo">
+                    <img width="280" height="115" src="./tesodev/assets/tesodevLogo.jpg" alt="">
+                    <span>Search web app</span>
+                </div>
+                <div class="actions">
+                    <input type="text" id="search">
+                    <button type="button">Search</button>
+                </div>
+                <div class="results">
+                    <div class="result-box" style="display: none;">
+                        <div class="result-item"></div>
+                        <span class="showMore">Show More</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        
+    let input = document.getElementById('search'),
+        inputVal = document.getElementById('search').value,
+        button = document.querySelector('button'),
+        resultBox = document.querySelector('.result-box'),
+        result = document.querySelector('.result-item'),
+        showMore = document.querySelector('.showMore');
+
+            input.addEventListener("change",function(e){
+                if(e.target.value.length > 3){
+                    let inputVal = e.target.value;
+
+                    button.addEventListener("click",function(e){
+                    e.preventDefault();
+                        setTimeout(() => {
+                        fetch('data.json')
+                        .then(res => res.json())
+                        .then(datas => {
+                            for(var i = 0 ; i < datas.data.length; i++){
+                                var el = datas.data[i];
+                                for (let j = 0; j < el.length; j++) {
+                                    if (el[j].includes(inputVal)) {
+                                        var createEl = document.createElement("div");
+                                        var resultItem=`
+                                            <div class="test">
+                                                <span><b>${el[4]} - ${el[5]}</b></span>
+                                                <span>${el[0]} - ${el[3]}</span>
+                                            </div>
+                                            <div class="test">
+                                                <b>Email : ${el[2]}</b>
+                                            </div>
+                                        ` ;
+                                        createEl.innerHTML = resultItem;
+                                        result.append(createEl);
+                                        resultBox.style.display = "block"
+                                    }
+                                }
+                            }
+                })
+                        }, 1000);
+                })
+                }
+            })
+            showMore.addEventListener("click",function(e){
+                e.preventDefault();
+                result.style.height = "auto"
+                result.style.overflow = "auto"
+            })
+    </script>
+</body>
+</html>
